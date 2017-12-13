@@ -1,13 +1,15 @@
 %simpler_simplemodel
 %2-spring unit oscillator
 
+%clear everything
+clear; clc;
 tic
 
-I_AVB_array = [0.46:0.01:0.54];
+I_AVB_array = [0.48, 0.5, 0.55, 0.6];
 cycles = [];
 periods = [];
 amps = [];
-for jj = 1:size(I_AVB_array,2)
+for jj = 1:size(I_AVB_array)
     I_AVB = I_AVB_array(jj);
 
 %timescales
@@ -108,24 +110,18 @@ legend('SD', 'SV');
 
 toc
 
-try
-    [cycle, period, amp, mean_c] = extract_cycle(m(2000:end), tspan(2000:end), 10^(-2), 10^2);
-    % cycles = [[cycles]; [cycle];];
-    periods = [periods; period];
-    amps = [amps; amp];
-catch
-    display('error in finding cycle for ');
-    display(I_AVB);
-    periods = [periods; 0];
-    amps = [amps; 0];
-end
+
+[cycle, period, amp, mean_c] = extract_cycle(m(2000:end), tspan(2000:end), 10^(-2), 10^2);
+
+cycles = [cycles; cycle;];
+periods = [periods; period];
+amps = [amps; amp];
 
 end
 
 figure(3);
 plot(I_AVB_array, periods, 'o');
-title('periods of torque cycles vs. AVB input current')
-xlabel('I_{AVB}'); ylabel('period (in time units)');
+
 figure(4);
 plot(I_AVB_array, amps, 'o')
 title('amplitudes of torque cycles vs. AVB input current')
