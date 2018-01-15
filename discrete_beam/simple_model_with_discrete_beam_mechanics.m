@@ -18,8 +18,15 @@ A = spdiags([e -2*e e], [0 1 2], n-2, n);
 %muscle+mechanics s.t. always at steady state - 0 or 1
 t_m = 10; %muscular activity timescale
 I_AVB = 0.5; %driving AVB current
-k_SR = 10; %stretch receptor weight
 eps_h = 0.2; %hysteresis window
+m = 20; %proprioceptive signal distance
+k_SR = 100; %stretch receptor weight
+
+%guassian kernel for proprioception
+grid = -m:m;
+sig = 1; %std dev of kernel
+G = exp(-grid.^2./(2*sig^2)); %Gaussian kernel of width 2m
+G = 2*G/sum(G); %normalize so half of G has area 1    
 
 %inhomogeneous driving current
 I_AVB = 0.5*ones(n-2,1);
@@ -66,22 +73,26 @@ for t = 1:100/dt-1
     %Neural activity!
     
     %proprioceptive integration
-    m = 20; %proprioceptive signal distance
     prop_signal = zeros(n-2,1);
     %for neurons at the HEAD, less proprioceptive coupling since fewer
     %anterior neurons
     for ii= 1:m
+       %guassian kernel for proprioception - need new one for each size
+       grid2 = -ii:ii;
+       G2 = exp(-grid2.^2./(2*sig^2)); %Gaussian kernel of width 2m
+       G2 = 2*G2/sum(G2); %normalize so half of G has area 1   
        for jj=0:ii-1
-            prop_signal(ii) = prop_signal(ii) + K(ii-jj)*exp(-jj/ii);
-            %signal decays exponentially -> *1 at local point, *e^-1 at
-            %furthest point
+            prop_signal(ii) = prop_signal(ii) + K(ii-jj)*G2(ii-jj);
+            %signal filtered with Gaussian kernel
        end
     end
+    
     %for neurons m posterior from the head, m anterior neurons yield max
     %proprioceptive coupling
     for ii = 1+m:n-2
         for jj = 0:m-1
-            prop_signal(ii) = prop_signal(ii) + K(ii-jj)*exp(-jj/(m-1));
+            prop_signal(ii) = prop_signal(ii) + K(ii-jj)*G(m-jj);
+            %signal filtered with Gaussian kernel
         end
     end
         
