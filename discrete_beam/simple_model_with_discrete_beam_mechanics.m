@@ -7,7 +7,7 @@ delX = 1/n; %segment length
 dt = 0.1;   %time step for discrete PDE backward Euler solve
 Kb = 10; %bending stiffness
 xi = 1; %viscosity
-char_scale = 10e5; %char scale Kb/xi
+char_scale = 100; %char scale Kb/xi
 
 %discrete beam PDE matrix
 e = ones(n,1);
@@ -31,7 +31,7 @@ G = 2*G/sum(G); %normalize so half of G has area 1
 %inhomogeneous driving current
 I_AVB = 0.5*ones(n-2,1);
 I_AVB2 = 0.5*ones(n-2,1); %breaks dorsal-ventral symmetry
-% I_AVB(1) = 10e3;
+% I_AVB(1) = 10e10;
 
 %Neural functions
 % I = @(K) I_AVB + k_SR*K;
