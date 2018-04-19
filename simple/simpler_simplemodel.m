@@ -3,7 +3,9 @@
 
 tic
 
-I_AVB_array = [0.46:0.01:0.54];
+% I_AVB_array = [0.46:0.01:0.54];
+I_AVB_array = [0.5];
+% I_AVB_array = [0.3:0.01:0.7];
 cycles = [];
 periods = [];
 amps = [];
@@ -16,10 +18,10 @@ t_m = 100; %muscular activity timescale
 
 %assume neural dynamics occur on a fast timescale compared to
 %muscle+mechanics s.t. always at steady state - 0 or 1
-SD_init = 0;
+SD_init = 1;
 SV_init = 0;
 % I_AVB = 0.48; %driving AVB current
-k_SR = 1; %stretch receptor weight
+k_SR = 0.01; %stretch receptor weight
 eps_h = 0.2; %hysteresis window
 
 I = @(m) I_AVB - k_SR*m;
@@ -29,7 +31,8 @@ S_V = @(m) S(I(-m), SV_init);
 
 %driving torque- depends pw-linearly on muscle activities AD, AV
 pw_lin = @(A) 0*(A<=0) + A*(0<A & A<=1) + 1*(A>=1);
-m0 = @(AD, AV) pw_lin(AD) - pw_lin(AV);
+% m0 = @(AD, AV) pw_lin(AD) - pw_lin(AV);
+m0 = @(AD, AV) 1*(AD - AV);
 
 
 %muscle and mechanical ODEs
@@ -42,9 +45,9 @@ system = @(t,x) [m_rhs(x(1), x(2), x(3)); AD_rhs(x(1), x(2), x(3)); AV_rhs(x(1),
 %integrate
 dt = (1/t_m)*10;
 tspan = 1:dt:1000;
-m_init = 0.5;
-AD_init= 0.5;
-AV_init = 0.25;
+m_init = -0.6;
+AD_init= 0;
+AV_init = 0;
 
 y_temp = [m_init; AD_init; AV_init;];
 m_temp = y_temp(1);
@@ -107,7 +110,7 @@ xlabel('t')
 legend('SD', 'SV');
 
 toc
-
+%attempt to capture limit cycle and its properties
 try
     [cycle, period, amp, mean_c] = extract_cycle(m(2000:end), tspan(2000:end), 10^(-2), 10^2);
     % cycles = [[cycles]; [cycle];];
@@ -123,11 +126,11 @@ end
 end
 
 figure(3);
-plot(I_AVB_array, periods, 'o');
+plot(I_AVB_array, periods, 'o-');
 title('periods of torque cycles vs. AVB input current')
 xlabel('I_{AVB}'); ylabel('period (in time units)');
 figure(4);
-plot(I_AVB_array, amps, 'o')
+plot(I_AVB_array, amps, 'o-')
 title('amplitudes of torque cycles vs. AVB input current')
 xlabel('I_{AVB}'); ylabel('amp');
 

@@ -7,7 +7,7 @@ delX = 1/n; %segment length
 dt = 0.1;   %time step for discrete PDE backward Euler solve
 Kb = 10; %bending stiffness
 xi = 1; %viscosity
-char_scale = 100; %char scale Kb/xi
+char_scale = 1000; %char scale Kb/xi
 
 %discrete beam PDE matrix
 e = ones(n,1);
@@ -17,9 +17,9 @@ A = spdiags([e -2*e e], [0 1 2], n-2, n);
 %assume neural dynamics occur on a fast timescale compared to
 %muscle+mechanics s.t. always at steady state - 0 or 1
 t_m = 10; %muscular activity timescale
-I_AVB = 0.5; %driving AVB current
+% I_AVB = 0.5; %driving AVB current
 eps_h = 0.2; %hysteresis window
-m = 20; %proprioceptive signal distance
+m = 1; %proprioceptive signal distance
 k_SR = 100; %stretch receptor weight
 
 %guassian kernel for proprioception
@@ -30,7 +30,8 @@ G = 2*G/sum(G); %normalize so half of G has area 1
 
 %inhomogeneous driving current
 I_AVB = 0.5*ones(n-2,1);
-I_AVB2 = 0.5*ones(n-2,1); %breaks dorsal-ventral symmetry
+I_AVB2 = I_AVB;
+% I_AVB2 = 0.5*ones(n-2,1); %breaks dorsal-ventral symmetry
 % I_AVB(1) = 10e10;
 
 %Neural functions
@@ -39,19 +40,20 @@ S = @(I,s) 1.*(I>=0.5+eps_h*(0.5-s)) + 0.*(I<=0.5+eps_h*(0.5-s));
 
 %driving torque- depends pw-linearly on muscle activities AD, AV
 pw_lin = @(A) 0*(A<=0) + A.*(0<A & A<=1) + 1.*(A>=1);
-m0 = @(AD, AV) 100*(pw_lin(AD) - pw_lin(AV));
+% m0 = @(AD, AV) 100*(pw_lin(AD) - pw_lin(AV));
+m0 = @(AD, AV) 100*(AD - AV);
 
 %initial states
 y = zeros(n,1);
 K = zeros(n-2,1);
-AD = 0.5*ones(n-2,1);
-AV = 0.25*ones(n-2,1);
+AD = rand(n-2,1);
+AV = rand(n-2,1);
 SD = zeros(n-2,1);
 SV = zeros(n-2,1);
 
 
 
-save = [];
+save = zeros(n-2, 100/dt-1);
 for t = 1:100/dt-1
     %Mechanics!
     %compute new active moment in each body segment
@@ -68,12 +70,12 @@ for t = 1:100/dt-1
     plot(y(1:end));
     text(3,0.04, strcat('t= ',num2str(t*dt)));
     ylim([-1, 1]);  
-    pause(0.01); 
+    pause(0.0001); 
     
     %Neural activity!
     
     %proprioceptive integration
-    prop_signal = zeros(n-2,1);
+    P = zeros(n-2,1);
     %for neurons at the HEAD, less proprioceptive coupling since fewer
     %anterior neurons
     for ii= 1:m
@@ -82,7 +84,7 @@ for t = 1:100/dt-1
        G2 = exp(-grid2.^2./(2*sig^2)); %Gaussian kernel of width 2m
        G2 = 2*G2/sum(G2); %normalize so half of G has area 1   
        for jj=0:ii-1
-            prop_signal(ii) = prop_signal(ii) + K(ii-jj)*G2(ii-jj);
+            P(ii) = P(ii) + K(ii-jj)*G2(ii-jj);
             %signal filtered with Gaussian kernel
        end
     end
@@ -91,23 +93,24 @@ for t = 1:100/dt-1
     %proprioceptive coupling
     for ii = 1+m:n-2
         for jj = 0:m-1
-            prop_signal(ii) = prop_signal(ii) + K(ii-jj)*G(m-jj);
+            P(ii) = P(ii) + K(ii-jj)*G(m-jj);
             %signal filtered with Gaussian kernel
         end
     end
         
     %compute neural states
-    SD = S(I_AVB + k_SR*prop_signal, SD);
-    SV = S(I_AVB2 - k_SR*prop_signal, SV);
+    SD = S(I_AVB + k_SR*P, SD);
+    SV = S(I_AVB2 - k_SR*P, SV);
     
     %integrate muscle activity
     AD = (SD - SV) + (-(SD - SV)  + AD)*exp(-dt/t_m);
     AV = (SV - SD) + (-(SV - SD)  + AV)*exp(-dt/t_m);
    
     %save neural activity
-    save = [save; AD(1)]; 
+    save(:,t) = AD;
 end
 
 figure(2);
-plot(save)
+surf(save');
+view(2); shading flat;
 
