@@ -9,13 +9,13 @@
 % c1 = K(0) - c2
 
 %what should a0 be from find_alphas?
-a0 = 0.5;
+a0 = -4.54;
 
 %params
 eps = 0.5;
-c = 100;
+c = 10;
 I = 0.01;
-tau = 100;
+tau = 0.4;
 
 %results in
 K_V_ON = eps/2-I;
@@ -91,7 +91,7 @@ figure(1); clf;
 subplot(2,1,1); plot(K, '-');
 subplot(2,1,2); plot(Kp, '-');
 figure(3); clf;
-plot(K, Kp, 'o-'); hold on
+plot(K, Kp, '-'); hold on
 line([-c-1,c+1],[0,0], 'Color',[0 0 0])
 line([K_V_ON, K_V_ON], [-c-1,c+1], 'Color',[1 0 0])
 line([-K_V_OFF, -K_V_OFF], [-c-1,c+1], 'Color',[0 1 0])
@@ -100,8 +100,10 @@ line([-K_V_ON, -K_V_ON], [-c-1,c+1], 'Color',[0 1 0])
 line([-c, -c], [0,0], 'Color',[0 0 0], 'Marker', 'o')
 line([c, c], [0,0], 'Color',[0 0 0], 'Marker', 'o')
 line([0,0],[-c-1,c+1], 'Color',[0 0 0])
-xlim([-c-1, c+1])
-ylim([-c-1, c+1])
+xlim([min(K), max(K)])
+ylim([min(Kp), max(Kp)])
+% xlim([-c-1, c+1]);
+% ylim([-c-1, c+1]);
 
 % hold on;
 % plot(deltaV)
