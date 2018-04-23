@@ -9,17 +9,27 @@
 % c1 = K(0) - c2
 
 %what should a0 be from find_alphas?
-a0 = -4.54;
+a0 = -1;
 
 %params
-eps = 0.5;
-c = 10;
-I = 0.01;
-tau = 0.4;
+eps = 2; %%-] These two determine thresholds together
+I = -0.1;  %%-]
+
+c = 1.3;  %%- Must be bigger than K_V_ON to get past first threshold
+tau = 1e10;  %%- defines timescale of system
 
 %results in
 K_V_ON = eps/2-I;
 K_V_OFF = -eps/2-I;
+
+%worked-out oscillation checks
+if (-K_V_OFF + K_V_ON*(tau-1))/tau >= c
+    display('shouldnt be oscillations');
+elseif (-K_V_OFF/c)^tau >= -K_V_OFF/K_V_ON
+    display('shouldnt be oscillations');
+else
+    display('SHOULD get oscillations');
+end
 
 %visualize thresholds
 n= 10;
@@ -31,12 +41,12 @@ l3 = (-eps/2  - I)*ones(n,1);
 l4 = (-eps/2 + I)*ones(n,1);
 l41 = linspace(-eps/2  + I, eps/2  + I, n);
 figure(2); clf;
-plot(ss, l1, '*-g'); hold on;
-plot(ss, l2, 'o-r');
-plot(ss, l3, 'o-r');
-plot(ss, l23, 'o-r');
-plot(ss, l4, '*-g'); 
-plot(ss, l41, '*-g'); hold off;
+plot(ss, l1, '<-b'); hold on; text(-0.05, eps/2+I, '\kappa^D_{off}', 'Color', 'blue')
+plot(ss, l2, '->r'); text(-0.08, eps/2-I, '\kappa^V_{on}', 'Color', 'red')
+plot(ss, l3, '<-r'); text(-0.08, -eps/2-I, '\kappa^V_{off}', 'Color', 'red')
+% plot(ss, l23, 'o-r');
+plot(ss, l4, '->b'); text(-0.05, -eps/2+I, '\kappa^D_{on}', 'Color', 'blue')
+% plot(ss, l41, '*-b'); hold off;
 xlabel('S'); ylabel('K');
 
 %IC
@@ -87,11 +97,11 @@ for i = 2:N
 end
 
 figure(1); clf;
-% plot(K); 
-subplot(2,1,1); plot(K, '-');
-subplot(2,1,2); plot(Kp, '-');
+t = 0:dt:dt*(N-1);
+subplot(2,1,1); plot(t,K, '-'); ylabel('\kappa'); xlabel('t');
+subplot(2,1,2); plot(t,Kp, '-'); ylabel('d\kappa /dt'); xlabel('t');
 figure(3); clf;
-plot(K, Kp, '-'); hold on
+plot(K, Kp, '-'); hold on; ylabel('d \kappa / dt'); xlabel('\kappa');
 line([-c-1,c+1],[0,0], 'Color',[0 0 0])
 line([K_V_ON, K_V_ON], [-c-1,c+1], 'Color',[1 0 0])
 line([-K_V_OFF, -K_V_OFF], [-c-1,c+1], 'Color',[0 1 0])

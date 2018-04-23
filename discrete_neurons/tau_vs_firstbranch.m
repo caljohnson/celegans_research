@@ -2,16 +2,16 @@
 
 %fixed parameters
 %params
-eps = 0.5;
+eps = 2;
 c = 1;
-I = 0.01;
+I = 0.1;
 
 %results in
 K_V_ON = eps/2-I;
 K_V_OFF = -eps/2-I;
 
 % tau = [0.01; 0.1; 0.2; 0.3; 0.4; 0.5; 0.6; 0.7; 0.8; 0.9; 1.1; 10;];
-tau = 0.1;
+tau = 1.1;
 
 for ii = 1:size(tau,1);
    figure(ii); clf;    

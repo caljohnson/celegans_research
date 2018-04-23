@@ -2,8 +2,8 @@
 
 %fixed parameters
 %params
-eps = 0.5;
-c = 1;
+eps = 2;
+c = 2;
 I = 0.01;
 
 %results in
@@ -11,13 +11,12 @@ K_V_ON = eps/2-I;
 K_V_OFF = -eps/2-I;
 
 % tau = [0.01; 0.1; 0.2; 0.3; 0.4; 0.5; 0.9; 1.1; 10;];
-tau = 0.1;
-
+tau = 1.1;
 
 for ii = 1:size(tau,1);
    figure(ii); clf;    
    title_plot = strcat('tau = ', num2str(tau(ii)));
-   for alpha= 0:0.01:2
+   for alpha= 2*I:0.05:2*I + 0.1
         B = (K_V_ON + alpha)/(1-1/tau(ii));
         A = K_V_ON - B;
         K = @(t) A*exp(-t) + B*exp(-t./tau(ii));
