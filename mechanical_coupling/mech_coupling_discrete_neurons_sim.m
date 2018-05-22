@@ -2,7 +2,7 @@
 %simulates mechanical coupling on discrete neuron-system pair
 
 %mechanical params
-gamma = 1e-1; %parameter sweep this, calculate stable phase differences
+gamma = 1e1; %parameter sweep this, calculate stable phase differences
 mu = 5;  %]
 k = 1;   %] - set so that tau = mu/k = 5
 a = 0.1;     %]
@@ -54,8 +54,8 @@ K_V_ON = eps/2-I;   %K_D_ON is negative of this
 K_V_OFF = -eps/2-I; %K_D_OFF is negative of this
 
 %simulation stuff
-N = 1e7;
-dt = 5e-7;
+N = 1e6;
+dt = 5e-4;
 K = zeros(N,2);
 deltaV = zeros(N,2);
 A1 = zeros(2,1);
@@ -85,6 +85,11 @@ SV(2) = 0;
 K(1,1) = K_V_OFF;
 K(1,2) = -K_V_ON;
 
+%neural functions
+state_v_1 = discrete_neural_state_init(SV(1), K(1,1), K_V_OFF, K_V_ON, 1);
+state_d_1 = discrete_neural_state_init(SD(1), K(1,1), K_V_OFF, K_V_ON, 0);
+state_v_2 = discrete_neural_state_init(SV(2), K(1,2), K_V_OFF, K_V_ON, 1);
+state_d_2 = discrete_neural_state_init(SD(2), K(1,2), K_V_OFF, K_V_ON, 0);
 
 for i = 2:N
     %update ?V
@@ -97,31 +102,11 @@ for i = 2:N
     K(i,:) = K(i-1,:) + dt*kappa_dot(K(i-1,:), A1,A2)';
   
     %update states for unit 1
-    if K(i,1) >= -K_V_OFF
-       SD(1) = 0;
-    end
-    if K(i,1) >= K_V_ON
-       SV(1) = 1;
-    end
-    if K(i,1) <= K_V_OFF
-       SV(1) = 0;
-    end
-    if K(i,1) <= -K_V_ON
-       SD(1) = 1;
-    end
+    SV(1) = state_v_1(K(i,1));
+    SD(1) = state_d_1(K(i,1));
     %update states for unit 2
-    if K(i,2) >= -K_V_OFF
-       SD(2) = 0;
-    end
-    if K(i,2) >= K_V_ON
-       SV(2) = 1;
-    end
-    if K(i,2) <= K_V_OFF
-       SV(2) = 0;
-    end
-    if K(i,2) <= -K_V_ON
-       SD(2) = 1;
-   end
+    SV(2) = state_v_2(K(i,2));
+    SD(2) = state_d_2(K(i,2));
 end
 
 figure(1); clf;
