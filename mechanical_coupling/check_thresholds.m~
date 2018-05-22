@@ -1,0 +1,25 @@
+function [  ] = check_thresholds( )
+%CHECK_THRESHOLDS checking if other thing works
+%
+
+SV = discrete_neural_state_init(0, -2, 1, -1);
+
+s1 = zeros(100,1);
+s2 = zeros(100,1);
+
+k1 = linspace(-2,2,100);
+k2 = fliplr(k1);
+
+for i =1:100
+    s1(i) = SV(k1(i));
+end
+for i =1:100
+    s2(i) = SV(k2(i));
+end
+
+figure(1); clf;
+plot(
+
+
+end
+

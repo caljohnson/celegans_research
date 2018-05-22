@@ -1,0 +1,7 @@
+function [ output_args ] = discrete_neural_state_init( thresh )
+%DISCRETE_NEURAL_STATE_INIT Summary of this function goes here
+%   Detailed explanation goes here
+
+
+end
+

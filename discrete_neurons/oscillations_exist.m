@@ -13,10 +13,10 @@ a0 = -1;
 
 %params
 eps = 2; %%-] These two determine thresholds together
-I = -0.1;  %%-]
+I = 0.1;  %%-]
 
-c = 1.3;  %%- Must be bigger than K_V_ON to get past first threshold
-tau = 1e10;  %%- defines timescale of system
+c = 100;  %%- Must be bigger than K_V_ON to get past first threshold
+tau = 5;  %%- defines timescale of system
 
 %results in
 K_V_ON = eps/2-I;
@@ -41,14 +41,17 @@ l3 = (-eps/2  - I)*ones(n,1);
 l4 = (-eps/2 + I)*ones(n,1);
 l41 = linspace(-eps/2  + I, eps/2  + I, n);
 figure(2); clf;
-plot(ss, l1, '<-b'); hold on; text(-0.05, eps/2+I, '\kappa^D_{off}', 'Color', 'blue')
+plot(ss, l1, '<-b'); hold on; text(-0.06, eps/2+I, '\kappa^D_{off}', 'Color', 'blue')
 plot(ss, l2, '->r'); text(-0.08, eps/2-I, '\kappa^V_{on}', 'Color', 'red')
 plot(ss, l3, '<-r'); text(-0.08, -eps/2-I, '\kappa^V_{off}', 'Color', 'red')
-% plot(ss, l23, 'o-r');
-plot(ss, l4, '->b'); text(-0.05, -eps/2+I, '\kappa^D_{on}', 'Color', 'blue')
+plot(zeros(n,1), l23, '-^r'); plot(ones(n,1), l23, '-vr');
+plot(-0.01*ones(n,1), l41, '-vb'); plot(0.99*ones(n,1), l41, '-^b');
+plot(ss, l4, '->b'); text(-0.06, -eps/2+I, '\kappa^D_{on}', 'Color', 'blue')
+xlim([-0.01 1])
 % plot(ss, l41, '*-b'); hold off;
 xlabel('S'); ylabel('K');
 
+return
 %IC
 k0 = K_V_OFF;
 kp0 = a0;
