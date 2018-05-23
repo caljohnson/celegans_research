@@ -15,7 +15,7 @@ a0 = -1;
 eps = 2; %%-] These two determine thresholds together
 I = 0.1;  %%-]
 
-c = 100;  %%- Must be bigger than K_V_ON to get past first threshold
+c = 10;  %%- Must be bigger than K_V_ON to get past first threshold
 tau = 5;  %%- defines timescale of system
 
 %results in
@@ -51,7 +51,6 @@ xlim([-0.01 1])
 % plot(ss, l41, '*-b'); hold off;
 xlabel('S'); ylabel('K');
 
-return
 %IC
 k0 = K_V_OFF;
 kp0 = a0;
@@ -115,8 +114,36 @@ line([c, c], [0,0], 'Color',[0 0 0], 'Marker', 'o')
 line([0,0],[-c-1,c+1], 'Color',[0 0 0])
 xlim([min(K), max(K)])
 ylim([min(Kp), max(Kp)])
-% xlim([-c-1, c+1]);
-% ylim([-c-1, c+1]);
 
-% hold on;
-% plot(deltaV)
+
+%%%%%%%%%%%% for presentation
+figure(4); clf;
+subplot(2,2,1); plot(t(1000:3200), K(1000:3200), 'LineWidth', 4.0); 
+ylabel('\kappa','FontSize', 40); xlabel('t','FontSize', 24); hold on
+line([t(1000), t(3200)],[-K_V_ON, -K_V_ON], 'Color',[1 0 0], ...
+        'LineStyle', '--', 'LineWidth', 2.0)
+line([t(1000), t(3200)],[K_V_OFF, K_V_OFF], 'Color',[0 1 0], ...
+        'LineStyle', '--', 'LineWidth', 2.0)
+line([t(1000), t(3200)],[-K_V_OFF, -K_V_OFF], 'Color',[1 0 0],...
+    'LineStyle', '--', 'LineWidth', 2.0)
+line([t(1000), t(3200)],[K_V_ON, K_V_ON], 'Color',[0 1 0], ...
+    'LineStyle', '--', 'LineWidth', 2.0);
+xlim([t(1000),t(3200)]);
+subplot(2,2,3); 
+plot(t(1000:3200), deltaV(1000:3200), 'LineWidth', 4.0, ...
+    'Marker', '>', 'MarkerSize', 0.5, 'LineStyle','--');
+ylabel('\Delta V','FontSize', 40); xlabel('t','FontSize', 24);
+xlim([t(1000),t(3200)]);
+subplot(2,2,4); plot(K(1000:3200), Kp(1000:3200),'LineWidth', 4.0);
+ylabel('\kappa', 'FontSize', 40);
+xlabel('\kappa','FontSize', 40);
+line([-c-1,c+1],[0,0], 'Color',[0 0 0])
+line([-K_V_ON, -K_V_ON], [-c-1,c+1], 'Color',[1 0 0],'LineStyle', '--', 'LineWidth', 2.0)
+line([K_V_OFF, K_V_OFF], [-c-1,c+1], 'Color',[0 1 0],'LineStyle', '--', 'LineWidth', 2.0)
+line([-K_V_OFF, -K_V_OFF], [-c-1,c+1], 'Color',[1 0 0],'LineStyle', '--', 'LineWidth', 2.0)
+line([K_V_ON, K_V_ON], [-c-1,c+1], 'Color',[0 1 0],'LineStyle', '--', 'LineWidth', 2.0)
+line([-c, -c], [0,0], 'Color',[0 0 0], 'Marker', 'o')
+line([c, c], [0,0], 'Color',[0 0 0], 'Marker', 'o')
+line([0,0],[-c-1,c+1], 'Color',[0 0 0])
+xlim([min(K), max(K)])
+ylim([min(Kp), max(Kp)])

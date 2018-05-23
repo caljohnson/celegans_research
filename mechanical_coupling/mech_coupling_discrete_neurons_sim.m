@@ -15,14 +15,14 @@ delX = 0.5;  %]- set so that c= 1/(2*a*delX) = 10
 %     (-k/mu)*(kappa(2) ...
 %     - (A2(1) -A2(2))/(2*a*delX) ...
 %     - delX/(8*a^2)*(kappa(1)+kappa(2))*(A2(1) + A2(2)));];
-%    
+% %    
 % % ignoring "high-order" terms, no external fluid viscosity
 % kappa_dot = @(kappa, A1,A2) [(-k/mu)*(kappa(1) ...
 %     - (A1(1) -A1(2))/(2*a*delX));
 %     (-k/mu)*(kappa(2) ...
 %     - (A2(1) -A2(2))/(2*a*delX));]; 
 
-%with fluid viscosity, no higher order terms
+% with fluid viscosity, no higher order terms
 d = gamma*delX/(4*a^2*mu);
 RHS_matrix = [d 1; 1 d;];
 kappa_dot = @(kappa, A1,A2) RHS_matrix\[(-k/mu)*(kappa(1) ...
@@ -98,7 +98,7 @@ for i = 2:N
     
     %forward-Euler step
     A1 = A1 + dt*muscle_activity(SD(1), SV(1), A1);
-    A2 = A2 + dt*muscle_activity(SD(2), SV(2), A2);
+%     A2 = A2 + dt*musc`le_activity(SD(2), SV(2), A2);
     K(i,:) = K(i-1,:) + dt*kappa_dot(K(i-1,:), A1,A2)';
   
     %update states for unit 1
