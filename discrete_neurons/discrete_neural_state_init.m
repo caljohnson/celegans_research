@@ -6,24 +6,14 @@ function [ updater_handle ] = discrete_neural_state_init( S_init, K_init, off_th
 % is_V =1 for V neurons, =0 for D neurons (swaps definition of handle)
 
 %initialize state of neuron
-if is_V == 1
-    if( K_init >= on_thresh ) %if pass upper threshold, turn on
-        S = 1;
-    elseif( K_init <= off_thresh ) %if pass lower threshold, turn off
-        S = 0;
-    else
-        S = S_init;
-    end 
-else %if is_V == 0, looking at D neuron, input is -K
-    if( -K_init >= on_thresh ) %if pass upper threshold, turn on
-        S = 1;
-    elseif( -K_init <= off_thresh ) %if pass lower threshold, turn off
-        S = 0;
-    else
-        S = S_init;
-    end 
-end
-    
+if( K_init > on_thresh ) %if pass upper threshold, turn on
+    S = 1;
+elseif( K_init < off_thresh ) %if pass lower threshold, turn off
+    S = 0;
+else
+    S = S_init;
+end 
+
 %return updater handle, depending on if V or D neuron
 if is_V == 1
     updater_handle = @(K) discrete_neural_state_updater(K);
