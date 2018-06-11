@@ -37,34 +37,34 @@ K_V_OFF = -eps/2-I; %K_D_OFF is negative of this
 % SV(2) = 1;
 % K(1) = K_V_OFF;
 % K(2) = -K_V_OFF;
-% A(1,1) = 2;
+% A(1,1) = 0;
 % A(1,2) = 0;
 % A(2,1) = 0;
-% A(2,2) = 2;
-
-% %IC - start in-phase
-% SD(1) = 1;
-% SV(1) = 0;
-% SD(2) = 1;
-% SV(2) = 0;
-% K(1) = K_V_OFF;
-% K(2) = K_V_OFF;
-% A(1,1) = 2;
-% A(1,2) = 0;
-% A(2,1) = 2;
 % A(2,2) = 0;
 
-%IC - start w/ phase difference
+%IC - start in-phase
 SD(1) = 1;
 SV(1) = 0;
 SD(2) = 1;
 SV(2) = 0;
 K(1) = K_V_OFF;
-K(2) = 0;
+K(2) = K_V_OFF;
 A(1,1) = 1;
 A(1,2) = 0;
-A(2,1) = 0.5;
+A(2,1) = 1;
 A(2,2) = 0;
+
+% %IC - start w/ phase difference
+% SD(1) = 1;
+% SV(1) = 0;
+% SD(2) = 1;
+% SV(2) = 0;
+% K(1) = K_V_OFF;
+% K(2) = 0;
+% A(1,1) = 1;
+% A(1,2) = 0;
+% A(2,1) = 0.5;
+% A(2,2) = 0;
 
 %neural functions
 state_v_1 = discrete_neural_state_init(SV(1), K(1), K_V_OFF, K_V_ON, 1);

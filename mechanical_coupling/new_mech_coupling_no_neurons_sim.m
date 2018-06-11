@@ -22,9 +22,8 @@ LHS_matrix = (-(2/delX)*4*a^2*k).*[1 1; 1 -1;];
 kappa_dot = @(t,kappa, A) RHS_matrix\(LHS_matrix*[kappa(1); kappa(2);]...
     -a*k.*[(A(2)-A(1))+(A(4)-A(3));(A(2)-A(1))-(A(4)-A(3));]); 
 
-% fixed muscle tension
-%only one side contracts
-A_dot = @(t,A) (1/tau_m).*[-A(1); -A(2)+1; -A(3); -A(4);];
+% fixed muscle tension - only one side contracts
+A_dot = @(t,A) (1/tau_m).*[-A(1)+1; -A(2); -A(3); -A(4)+1;];
 
 %Initial conditions
 K(1) = 0;
@@ -48,18 +47,3 @@ subplot(3,2,4); plot(t,y(:,5), '-'); ylabel('A_2^D'); xlabel('t');
 subplot(3,2,6); plot(t,y(:,6), '-'); ylabel('A_2^V'); xlabel('t');
 % subplot(3,2,3); plot(t,y(:,4)-y(:,3), '-'); ylabel('A_1^V - A_1^D'); xlabel('t');
 % subplot(3,2,4); plot(t,y(:,6)-y(:,5), '-'); ylabel('A_2^V - A_2^D'); xlabel('t');
-% figure(2); clf;
-% plot(y(:,1), y(:,2), '-');
-% plot(K(end-2000:end,1), K(end-2000:end,2), '-');
-% figure(3); clf;
-% plot(K, Kp, '-'); hold on; ylabel('d \kappa / dt'); xlabel('\kappa');
-% line([-c-1,c+1],[0,0], 'Color',[0 0 0])
-% line([K_V_ON, K_V_ON], [-c-1,c+1], 'Color',[1 0 0])
-% line([-K_V_OFF, -K_V_OFF], [-c-1,c+1], 'Color',[0 1 0])
-% line([K_V_OFF, K_V_OFF], [-c-1,c+1], 'Color',[1 0 0])
-% line([-K_V_ON, -K_V_ON], [-c-1,c+1], 'Color',[0 1 0])
-% line([-c, -c], [0,0], 'Color',[0 0 0], 'Marker', 'o')
-% line([c, c], [0,0], 'Color',[0 0 0], 'Marker', 'o')
-% line([0,0],[-c-1,c+1], 'Color',[0 0 0])
-% xlim([min(K), max(K)])
-% ylim([min(Kp), max(Kp)])
